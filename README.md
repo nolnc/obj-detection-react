@@ -14,9 +14,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 - MediaPipe Object Detection Overview: https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector
 
 ## Software used
-- Node
-- VS Code
+- Node v20.9.0
 - Git
+- VS Code
 
 # Setting up the project
 
