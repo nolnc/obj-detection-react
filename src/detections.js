@@ -37,7 +37,7 @@ const hasGetUserMedia = () => {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 };
 
-const enableCam = async (event) => {
+const enableCam = async () => {
   //console.log("enableCam() video=" + video);
   if (!objectDetector || !isObjectDetectorReady) {
     console.log("Wait! objectDetector not loaded yet.");
@@ -83,6 +83,15 @@ const predictWebcam = async () => {
   window.requestAnimationFrame(predictWebcam);
 };
 
+const disableCam = async () => {
+  console.log("disableCam() video=" + video);
+  if (video.srcObject) {
+    const tracks = video.srcObject.getTracks();
+    tracks.forEach((track) => track.stop());
+    video.srcObject = null;
+  }
+};
+
 const displayVideoDetections = (result) => {
   for (let child of children) {
     liveView.removeChild(child);
@@ -91,6 +100,7 @@ const displayVideoDetections = (result) => {
 
   for (let detection of result.detections) {
     const p = document.createElement("p");
+    p.setAttribute("class", "info");
     p.innerText =
       detection.categories[0].categoryName +
       " - with " +
@@ -135,9 +145,14 @@ const displayVideoDetections = (result) => {
   }
 };
 
-async function requestImageDetection(event) {
-  removeHighlighters(event.target.parentNode);
-  removeInfos(event.target.parentNode);
+async function requestImageDetection(target) {
+    if (!target || !target.parentNode) {
+    console.error('Target element not found or missing parent node');
+    return;
+  }
+
+  removeHighlighters(target.parentNode);
+  removeInfos(target.parentNode);
 
   if (!objectDetector || !isObjectDetectorReady) {
     alert("Object Detector is still loading. Please try again.");
@@ -148,8 +163,10 @@ async function requestImageDetection(event) {
     await objectDetector.setOptions({ runningMode: "IMAGE" });
   }
 
-  const detections = objectDetector.detect(event.target);
-  displayImageDetections(detections, event.target);
+  console.log("target=" + target);
+
+  const detections = objectDetector.detect(target);
+  displayImageDetections(detections, target);
 };
 
 const removeHighlighters = (parent) => {
@@ -166,11 +183,18 @@ const removeInfos = (parent) => {
   }
 };
 
+function clearOverlays() {
+  const imagePairElem = document.getElementById("imagePair");
+  removeHighlighters(imagePairElem);
+  removeInfos(imagePairElem);
+}
+
 function displayImageDetections(result, resultElement) {
   const ratio = resultElement.height / resultElement.naturalHeight;
 
   for (let detection of result.detections) {
     const p = document.createElement("p");
+    p.setAttribute("class", "info");
     p.innerText =
       detection.categories[0].categoryName +
       " - with " +
@@ -208,6 +232,6 @@ function displayImageDetections(result, resultElement) {
   }
 };
 
-export { initDOMElements, hasGetUserMedia,
-         enableCam, predictWebcam, displayVideoDetections,
+export { initDOMElements, hasGetUserMedia, clearOverlays,
+         enableCam, disableCam, predictWebcam, displayVideoDetections,
          displayImageDetections, requestImageDetection };
