@@ -7,16 +7,18 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 - React-based user interface
 - Support for image and webcam video detection
 
+# References
+- This repo: https://github.com/nolnc/obj-detection-react 
+- MediaPipe Object Detection Overview: https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector
+
 # Acknowledgments
 - MediaPipe Object Detection CodePen Demo: https://codepen.io/mediapipe-preview/pen/vYrWvNg
-
-# References
-- MediaPipe Object Detection Overview: https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector
 
 ## Software used
 - Node v20.9.0
 - Git
 - VS Code
+- Chrome Version 130.0.6723.92
 
 # Setting up the project
 
