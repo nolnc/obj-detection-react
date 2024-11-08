@@ -99,7 +99,7 @@ section {
   height: 250px;
   width: 100%;
   border: 1px dashed #ccc;
-  background-color: #908899;
+  /*background-color: #908899;*/
   padding: 0;
   font-size: 16px;
   cursor: pointer;
