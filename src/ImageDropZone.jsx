@@ -1,3 +1,5 @@
+// Component for image upload and detection.
+
 import React, { useEffect, useState } from 'react';
 import { requestImageDetection, clearOverlays } from './detections';
 
@@ -7,13 +9,16 @@ const ImageDropZone = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    const imagePairRightElem = document.getElementById("imagePairRight");
-    if (imagePairRightElem) {
-      requestImageDetection(imagePairRightElem);
+    const imageForDetectElem = document.getElementById("image-for-detect");
+    if (imageForDetectElem) {
+      imageForDetectElem.onload = async () => {
+        await requestImageDetection(imageForDetectElem);
+      };
     }
   }, [imagePreview]);
 
-  const handleClearImageButtonClick = async () => {
+  const handleClearImageButtonClick = async (e) => {
+    e.stopPropagation();
     setImageFile(null);
     setImagePreview(null);
     clearOverlays();
@@ -63,12 +68,13 @@ const ImageDropZone = () => {
   };
 
   const handleClick = (e) => {
+    e.stopPropagation();
     document.getElementById('fileInput').click();
   };
 
   return (
     <div className="drop-zone-container">
-      <div className={`drop-zone ${dragging ? 'dragging' : ''}`}
+      <div id="image-for-detect-parent" className={`drop-zone ${dragging ? 'dragging' : ''}`}
         onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}
       >
         <input id="fileInput" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
@@ -76,13 +82,10 @@ const ImageDropZone = () => {
             {imageFile ? imageFile.name : 'Drag & Drop Image or Click to Upload'}
             </label>
           }
-        <div id="imagePair">
-          {imagePreview && <img id="imagePairLeft" src={imagePreview} alt="Click to detect objects" className="uploaded-image"/>}
-          {imagePreview && <img id="imagePairRight" src={imagePreview} alt="Click to detect objects" className="uploaded-image"/>}
-        </div>
+        {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects" className="uploaded-image"/>}
+        {imageFile && <label className="upload-label-outside">{imageFile.name}</label>}
+        {imagePreview && <button id="clearImage" className="mdc-button mdc-button--raised" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
       </div>
-      {imageFile && <label className="upload-label-outside">{imageFile.name}</label>}
-      {imagePreview && <button id="clearImage" className="mdc-button mdc-button--raised" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
     </div>
   );
 };

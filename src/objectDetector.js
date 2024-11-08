@@ -7,7 +7,6 @@
 import { ObjectDetector, FilesetResolver } from "@mediapipe/tasks-vision";
 
 let objectDetector = null;
-let runningMode = "IMAGE";
 let isObjectDetectorReady = false;
 
 const initializeObjectDetector = async () => {
@@ -20,7 +19,7 @@ const initializeObjectDetector = async () => {
           delegate: "GPU"
         },
         scoreThreshold: 0.5,
-        runningMode: runningMode
+        runningMode: "IMAGE"
       }
     );
     isObjectDetectorReady = true;
@@ -29,4 +28,4 @@ const initializeObjectDetector = async () => {
   }
 };
 
-export { initializeObjectDetector, objectDetector, runningMode, isObjectDetectorReady };
+export { initializeObjectDetector, objectDetector, isObjectDetectorReady };

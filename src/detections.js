@@ -8,7 +8,7 @@
 //      frame from the video stream and forwarding the frame image to the
 //      objectDetector for processing.
 
-import { objectDetector, runningMode, isObjectDetectorReady } from './objectDetector';
+import { objectDetector, isObjectDetectorReady } from './objectDetector';
 
 let video = null;
 let liveView = null;
@@ -16,12 +16,10 @@ let children = [];
 let lastVideoTime = -1;
 
 const initDOMElements = () => {
-  //console.log("initDOMElements()");
   if (document.readyState !== 'loading') {
     //console.log("Already loaded");
     video = document.getElementById("webcam");
     liveView = document.getElementById("liveView");
-    //console.log("document.addEventListener video=" + video);
   }
   else {
     console.log("Not loaded yet");
@@ -67,7 +65,7 @@ const enableCam = async () => {
 
 const predictWebcam = async () => {
   //console.log("predictWebcam()");
-  if (runningMode === "IMAGE") {
+  if (objectDetector.runningMode !== "VIDEO") {
     await objectDetector.setOptions({ runningMode: "VIDEO" });
   }
   let startTimeMs = performance.now();
@@ -89,6 +87,7 @@ const disableCam = async () => {
     const tracks = video.srcObject.getTracks();
     tracks.forEach((track) => track.stop());
     video.srcObject = null;
+    video.removeEventListener("loadeddata", predictWebcam);
   }
 };
 
@@ -102,10 +101,8 @@ const displayVideoDetections = (result) => {
     const p = document.createElement("p");
     p.setAttribute("class", "info");
     p.innerText =
-      detection.categories[0].categoryName +
-      " - with " +
-      Math.round(parseFloat(detection.categories[0].score) * 100) +
-      "% confidence.";
+      detection.categories[0].categoryName + " " +
+      Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
     p.style =
       "left: " +
       (video.offsetWidth -
@@ -150,7 +147,6 @@ async function requestImageDetection(target) {
     console.error('Target element not found or missing parent node');
     return;
   }
-
   removeHighlighters(target.parentNode);
   removeInfos(target.parentNode);
 
@@ -159,11 +155,9 @@ async function requestImageDetection(target) {
     return;
   }
 
-  if (runningMode === "VIDEO") {
+  if (objectDetector.runningMode !== "IMAGE") {
     await objectDetector.setOptions({ runningMode: "IMAGE" });
   }
-
-  console.log("target=" + target);
 
   const detections = objectDetector.detect(target);
   displayImageDetections(detections, target);
@@ -184,9 +178,9 @@ const removeInfos = (parent) => {
 };
 
 function clearOverlays() {
-  const imagePairElem = document.getElementById("imagePair");
-  removeHighlighters(imagePairElem);
-  removeInfos(imagePairElem);
+  const imageParentElem = document.getElementById("image-for-detect-parent");
+  removeHighlighters(imageParentElem);
+  removeInfos(imageParentElem);
 }
 
 function displayImageDetections(result, resultElement) {
@@ -196,10 +190,8 @@ function displayImageDetections(result, resultElement) {
     const p = document.createElement("p");
     p.setAttribute("class", "info");
     p.innerText =
-      detection.categories[0].categoryName +
-      " - with " +
-      Math.round(parseFloat(detection.categories[0].score) * 100) +
-      "% confidence.";
+      detection.categories[0].categoryName + " " +
+      Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
     p.style =
       "left: " +
       detection.boundingBox.originX * ratio +
