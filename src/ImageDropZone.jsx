@@ -1,7 +1,7 @@
 // Component for image upload and detection.
 
 import React, { useEffect, useState } from 'react';
-import { requestImageDetection, clearOverlays } from './detections';
+import { requestImageDetection, clearOverlays } from './Detections';
 
 const ImageDropZone = () => {
   const [dragging, setDragging] = useState(false);

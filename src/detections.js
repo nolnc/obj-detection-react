@@ -8,7 +8,7 @@
 //      frame from the video stream and forwarding the frame image to the
 //      objectDetector for processing.
 
-import { objectDetector, isObjectDetectorReady } from './objectDetector';
+import { objectDetector, isObjectDetectorReady } from './ObjectDetector';
 
 let video = null;
 let liveView = null;
