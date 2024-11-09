@@ -31,6 +31,88 @@ const initDOMElements = () => {
   };
 };
 
+const removeHighlighters = (parent) => {
+  const highlighters = parent.getElementsByClassName("overlay-box");
+  while (highlighters[0]) {
+    highlighters[0].parentNode.removeChild(highlighters[0]);
+  }
+};
+
+const removeInfos = (parent) => {
+  const infos = parent.getElementsByClassName("overlay-text");
+  while (infos[0]) {
+    infos[0].parentNode.removeChild(infos[0]);
+  }
+};
+
+function clearOverlays() {
+  const imageParentElem = document.getElementById("image-for-detect-parent");
+  removeHighlighters(imageParentElem);
+  removeInfos(imageParentElem);
+};
+
+async function requestImageDetection(target) {
+  if (!target || !target.parentNode) {
+    console.error('Target element not found or missing parent node');
+    return;
+  }
+  removeHighlighters(target.parentNode);
+  removeInfos(target.parentNode);
+
+  if (!objectDetector || !isObjectDetectorReady) {
+    alert("Object Detector is still loading. Please try again.");
+    return;
+  }
+
+  if (objectDetector.runningMode !== "IMAGE") {
+    await objectDetector.setOptions({ runningMode: "IMAGE" });
+  }
+
+  const detections = objectDetector.detect(target);
+  displayImageDetections(detections, target);
+};
+
+function displayImageDetections(result, resultElement) {
+  const ratio = resultElement.height / resultElement.naturalHeight;
+
+  for (let detection of result.detections) {
+    const p = document.createElement("p");
+    p.setAttribute("class", "overlay-text");
+    p.innerText =
+      detection.categories[0].categoryName + " " +
+      Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
+    p.style =
+      "left: " +
+      detection.boundingBox.originX * ratio +
+      "px;" +
+      "top: " +
+      detection.boundingBox.originY * ratio +
+      "px; " +
+      "width: " +
+      (detection.boundingBox.width * ratio - 10) +
+      "px;";
+
+    const highlighter = document.createElement("div");
+    highlighter.setAttribute("class", "overlay-box");
+    highlighter.style =
+      "left: " +
+      detection.boundingBox.originX * ratio +
+      "px;" +
+      "top: " +
+      detection.boundingBox.originY * ratio +
+      "px;" +
+      "width: " +
+      detection.boundingBox.width * ratio +
+      "px;" +
+      "height: " +
+      detection.boundingBox.height * ratio +
+      "px;";
+
+    resultElement.parentNode.appendChild(highlighter);
+    resultElement.parentNode.appendChild(p);
+  }
+};
+
 const hasGetUserMedia = () => {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 };
@@ -99,7 +181,7 @@ const displayVideoDetections = (result) => {
 
   for (let detection of result.detections) {
     const p = document.createElement("p");
-    p.setAttribute("class", "info");
+    p.setAttribute("class", "overlay-text");
     p.innerText =
       detection.categories[0].categoryName + " " +
       Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
@@ -117,7 +199,7 @@ const displayVideoDetections = (result) => {
       "px;";
 
     const highlighter = document.createElement("div");
-    highlighter.setAttribute("class", "highlighter");
+    highlighter.setAttribute("class", "overlay-box");
     highlighter.style =
       "left: " +
       (video.offsetWidth -
@@ -139,88 +221,6 @@ const displayVideoDetections = (result) => {
 
     children.push(highlighter);
     children.push(p);
-  }
-};
-
-async function requestImageDetection(target) {
-    if (!target || !target.parentNode) {
-    console.error('Target element not found or missing parent node');
-    return;
-  }
-  removeHighlighters(target.parentNode);
-  removeInfos(target.parentNode);
-
-  if (!objectDetector || !isObjectDetectorReady) {
-    alert("Object Detector is still loading. Please try again.");
-    return;
-  }
-
-  if (objectDetector.runningMode !== "IMAGE") {
-    await objectDetector.setOptions({ runningMode: "IMAGE" });
-  }
-
-  const detections = objectDetector.detect(target);
-  displayImageDetections(detections, target);
-};
-
-const removeHighlighters = (parent) => {
-  const highlighters = parent.getElementsByClassName("highlighter");
-  while (highlighters[0]) {
-    highlighters[0].parentNode.removeChild(highlighters[0]);
-  }
-};
-
-const removeInfos = (parent) => {
-  const infos = parent.getElementsByClassName("info");
-  while (infos[0]) {
-    infos[0].parentNode.removeChild(infos[0]);
-  }
-};
-
-function clearOverlays() {
-  const imageParentElem = document.getElementById("image-for-detect-parent");
-  removeHighlighters(imageParentElem);
-  removeInfos(imageParentElem);
-}
-
-function displayImageDetections(result, resultElement) {
-  const ratio = resultElement.height / resultElement.naturalHeight;
-
-  for (let detection of result.detections) {
-    const p = document.createElement("p");
-    p.setAttribute("class", "info");
-    p.innerText =
-      detection.categories[0].categoryName + " " +
-      Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
-    p.style =
-      "left: " +
-      detection.boundingBox.originX * ratio +
-      "px;" +
-      "top: " +
-      detection.boundingBox.originY * ratio +
-      "px; " +
-      "width: " +
-      (detection.boundingBox.width * ratio - 10) +
-      "px;";
-
-    const highlighter = document.createElement("div");
-    highlighter.setAttribute("class", "highlighter");
-    highlighter.style =
-      "left: " +
-      detection.boundingBox.originX * ratio +
-      "px;" +
-      "top: " +
-      detection.boundingBox.originY * ratio +
-      "px;" +
-      "width: " +
-      detection.boundingBox.width * ratio +
-      "px;" +
-      "height: " +
-      detection.boundingBox.height * ratio +
-      "px;";
-
-    resultElement.parentNode.appendChild(highlighter);
-    resultElement.parentNode.appendChild(p);
   }
 };
 

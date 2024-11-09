@@ -30,13 +30,13 @@ function App() {
       <h1>Multiple object detection using the MediaPipe Object Detector task</h1>
       <div>This demo uses a model trained on the COCO dataset. It can identify 80 different classes of object in an image. <a href="https://github.com/amikelive/coco-labels/blob/master/coco-labels-2014_2017.txt" target="_blank" rel="noreferrer">See a list of available classes</a>
         <p>Also, check out the repository for this project: <a href="https://github.com/nolnc/obj-detection-react" target="_blank" rel="noreferrer">obj-detection-react</a>.</p></div>
-      <section id="demos" className="readyUnMask">
+      <div id="detector-container">
 
         <div id="image-mode">
           <h2>Detecting Images</h2>
           <button className="display-mode-toggle" onClick={handleModeButtonClick}>Switch to VIDEO Mode</button>
           <p><b>Upload</b> an image below then <b>click</b> on it to detect objects in the image.</p>
-          <div className="detectOnClick">
+          <div id="staticImageView" className="imageView">
             <ImageDropZone/>
           </div>
         </div>
@@ -50,7 +50,7 @@ function App() {
           </div>
         </div>
 
-      </section>
+      </div>
     </div>
   );
 }

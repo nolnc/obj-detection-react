@@ -8,20 +8,46 @@ const ImageDropZone = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+  let resizeTimeout;
+
   useEffect(() => {
+    triggerImageDetection();
+  }, [imagePreview]);
+
+  useEffect(() => {
+    window.addEventListener('orientationchange', () => {
+      console.log("Window orientation changed");
+      triggerImageDetection();
+    });
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        console.log('Last resize event');
+        triggerImageDetection();
+      }, 500); // delay (ms)
+    });
+  }, []);
+
+  function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
     if (imageForDetectElem) {
       imageForDetectElem.onload = async () => {
         await requestImageDetection(imageForDetectElem);
+        const dropZoneSelector = document.querySelector('.drop-zone');
+        dropZoneSelector.style.width = `${imageForDetectElem.width}px`;
+        dropZoneSelector.style.height = `${imageForDetectElem.height}px`;
       };
     }
-  }, [imagePreview]);
+  }
 
   const handleClearImageButtonClick = async (e) => {
     e.stopPropagation();
     setImageFile(null);
     setImagePreview(null);
     clearOverlays();
+    const dropZoneSelector = document.querySelector('.drop-zone');
+    dropZoneSelector.style.width = `50vw`;
+    dropZoneSelector.style.height = `25vh`;
   };
 
   const handleDragEnter = (e) => {
@@ -82,48 +108,12 @@ const ImageDropZone = () => {
             {imageFile ? imageFile.name : 'Drag & Drop Image or Click to Upload'}
             </label>
           }
-        {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects" className="uploaded-image"/>}
+        {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects"/>}
         {imageFile && <label className="upload-label-outside">{imageFile.name}</label>}
-        {imagePreview && <button id="clearImage" className="mdc-button mdc-button--raised" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
+        {imagePreview && <button id="clear-image-button" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
       </div>
     </div>
   );
 };
 
 export default ImageDropZone;
-
-/*
-import React, { useRef, createContext, useContext, useState } from 'react';
-
-const imageDropZoneImgRef = createContext(null);
-
-function ImageDropZone() {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const imageDropZoneImgRef = useRef(null);
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setSelectedImage(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  return (
-    <div width="50%"
-      onDrop={handleDrop} onDragOver={handleDragOver} style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center' }}>
-      { selectedImage ? (<img ref={imageDropZoneImgRef} src={selectedImage} crossOrigin="anonymous" alt="Click to get classification!" />) :
-                        (<p>Drag and drop an image here, or click to select</p>)
-      }
-    </div>
-  );
-}
-
-export { ImageDropZone, imageDropZoneImgRef };
-*/
