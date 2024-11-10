@@ -32,23 +32,6 @@ const initDOMElements = () => {
   };
 };
 
-function removeImageOverlay(parent) {
-  const boxes = parent.getElementsByClassName("overlay-box");
-  while (boxes[0]) {
-    boxes[0].parentNode.removeChild(boxes[0]);
-  }
-
-  const texts = parent.getElementsByClassName("overlay-text");
-  while (texts[0]) {
-    texts[0].parentNode.removeChild(texts[0]);
-  }
-};
-
-function clearOverlays() {
-  const imageParentElem = document.getElementById("image-for-detect-parent");
-  removeImageOverlay(imageParentElem);
-};
-
 async function requestImageDetection(target) {
   if (!target || !target.parentNode) {
     console.error('Target element not found or missing parent node');
@@ -110,6 +93,22 @@ function displayImageDetections(result, resultElement) {
   }
 };
 
+function removeImageOverlay(parent) {
+  const boxes = parent.getElementsByClassName("overlay-box");
+  while (boxes[0]) {
+    boxes[0].parentNode.removeChild(boxes[0]);
+  }
+  const texts = parent.getElementsByClassName("overlay-text");
+  while (texts[0]) {
+    texts[0].parentNode.removeChild(texts[0]);
+  }
+};
+
+function clearImageOverlays() {
+  const imageParentElem = document.getElementById("image-for-detect-parent");
+  removeImageOverlay(imageParentElem);
+};
+
 const hasGetUserMedia = () => {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 };
@@ -145,12 +144,11 @@ const enableCam = async () => {
 };
 
 const predictVideoFrame = async () => {
-  //console.log("predictVideoFrame()");
   let startTimeMs = performance.now();
-  console.log("video.currentTime=" + video.currentTime + " lastVideoTime=" + lastVideoTime);
+  //console.log("video.currentTime=" + video.currentTime + " lastVideoTime=" + lastVideoTime);
   
   if (video.currentTime !== lastVideoTime) {
-    console.log("Attempt video object detect timeMs=" + startTimeMs);
+    //console.log("Attempt video object detect timeMs=" + startTimeMs);
     lastVideoTime = video.currentTime;
     const detections = objectDetector.detectForVideo(video, startTimeMs);
     displayVideoDetections(detections);
@@ -221,6 +219,6 @@ const displayVideoDetections = (result) => {
   }
 };
 
-export { initDOMElements, hasGetUserMedia, clearOverlays,
+export { initDOMElements, hasGetUserMedia, clearImageOverlays as clearOverlays,
          enableCam, disableCam, predictVideoFrame as predictWebcam, displayVideoDetections,
          displayImageDetections, requestImageDetection };
