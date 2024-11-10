@@ -16,7 +16,8 @@ const initializeObjectDetector = async () => {
     objectDetector = await ObjectDetector.createFromOptions(
       vision,
       { baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite`,
+          //modelAssetPath: `https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite`,
+          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite2/float32/latest/efficientdet_lite2.tflite',
           delegate: "GPU"
         },
         scoreThreshold: 0.5,
