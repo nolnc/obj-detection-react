@@ -8,47 +8,45 @@
 //      frame from the video stream and forwarding the frame image to the
 //      objectDetector for processing.
 
-import { objectDetector, isObjectDetectorReady } from './ObjectDetector';
+import { objectDetector, isObjectDetectorReady } from './ObjectDetectorAdapter';
 
 let video = null;
 let liveView = null;
-let children = [];
+let animationId;
+let videoOverlayElems = [];
 let lastVideoTime = -1;
 
 const initDOMElements = () => {
   if (document.readyState !== 'loading') {
     //console.log("Already loaded");
-    video = document.getElementById("webcam");
+    video = document.getElementById("videoCam");
     liveView = document.getElementById("liveView");
   }
   else {
-    console.log("Not loaded yet");
+    console.log("DOM elements not loaded yet");
     document.addEventListener('DOMContentLoaded', function () {
-        video = document.getElementById("webcam");
+      console.log("DOM Content Loaded");
+        video = document.getElementById("videoCam");
         liveView = document.getElementById("liveView");
-        //console.log("document.addEventListener video=" + video);
     });
   };
 };
 
-const removeHighlighters = (parent) => {
-  const highlighters = parent.getElementsByClassName("overlay-box");
-  while (highlighters[0]) {
-    highlighters[0].parentNode.removeChild(highlighters[0]);
+function removeImageOverlay(parent) {
+  const boxes = parent.getElementsByClassName("overlay-box");
+  while (boxes[0]) {
+    boxes[0].parentNode.removeChild(boxes[0]);
   }
-};
 
-const removeInfos = (parent) => {
-  const infos = parent.getElementsByClassName("overlay-text");
-  while (infos[0]) {
-    infos[0].parentNode.removeChild(infos[0]);
+  const texts = parent.getElementsByClassName("overlay-text");
+  while (texts[0]) {
+    texts[0].parentNode.removeChild(texts[0]);
   }
 };
 
 function clearOverlays() {
   const imageParentElem = document.getElementById("image-for-detect-parent");
-  removeHighlighters(imageParentElem);
-  removeInfos(imageParentElem);
+  removeImageOverlay(imageParentElem);
 };
 
 async function requestImageDetection(target) {
@@ -56,8 +54,7 @@ async function requestImageDetection(target) {
     console.error('Target element not found or missing parent node');
     return;
   }
-  removeHighlighters(target.parentNode);
-  removeInfos(target.parentNode);
+  removeImageOverlay(target.parentNode);
 
   if (!objectDetector || !isObjectDetectorReady) {
     alert("Object Detector is still loading. Please try again.");
@@ -118,10 +115,13 @@ const hasGetUserMedia = () => {
 };
 
 const enableCam = async () => {
-  //console.log("enableCam() video=" + video);
   if (!objectDetector || !isObjectDetectorReady) {
     console.log("Wait! objectDetector not loaded yet.");
     return;
+  }
+
+  if (objectDetector.runningMode !== "VIDEO") {
+    await objectDetector.setOptions({ runningMode: "VIDEO" });
   }
 
   if (!video) {
@@ -132,35 +132,30 @@ const enableCam = async () => {
   const constraints = {
     video: true
   };
-
   navigator.mediaDevices.getUserMedia(constraints)
     .then((stream) => {
       //console.log("getUserMedia() got stream");
       video.srcObject = stream;
-      video.addEventListener("loadeddata", predictWebcam);
+      video.addEventListener("loadeddata", predictVideoFrame);
     })
     .catch((err) => {
-      console.error('Webcam access denied or failed:', err);
-      alert('Webcam access denied or failed. Please check browser permissions.');
+      console.error('Camera access denied or failed:', err);
+      alert('Camera access denied or failed. Please check browser permissions.');
     });
 };
 
-const predictWebcam = async () => {
-  //console.log("predictWebcam()");
-  if (objectDetector.runningMode !== "VIDEO") {
-    await objectDetector.setOptions({ runningMode: "VIDEO" });
-  }
+const predictVideoFrame = async () => {
+  //console.log("predictVideoFrame()");
   let startTimeMs = performance.now();
-  //console.log("predictWebcam() startTimeMs=" + startTimeMs);
-  //console.log("video.currentTime=" + video.currentTime + " lastVideoTime=" + lastVideoTime);
+  console.log("video.currentTime=" + video.currentTime + " lastVideoTime=" + lastVideoTime);
   
   if (video.currentTime !== lastVideoTime) {
-    //console.log("Attempt object detect...");
+    console.log("Attempt video object detect timeMs=" + startTimeMs);
     lastVideoTime = video.currentTime;
     const detections = objectDetector.detectForVideo(video, startTimeMs);
     displayVideoDetections(detections);
   }
-  window.requestAnimationFrame(predictWebcam);
+  animationId = window.requestAnimationFrame(predictVideoFrame);
 };
 
 const disableCam = async () => {
@@ -169,15 +164,17 @@ const disableCam = async () => {
     const tracks = video.srcObject.getTracks();
     tracks.forEach((track) => track.stop());
     video.srcObject = null;
-    video.removeEventListener("loadeddata", predictWebcam);
+    video.removeEventListener("loadeddata", predictVideoFrame);
+    window.cancelAnimationFrame(animationId);
+    animationId = null;
   }
 };
 
 const displayVideoDetections = (result) => {
-  for (let child of children) {
+  for (let child of videoOverlayElems) {
     liveView.removeChild(child);
   }
-  children.splice(0);
+  videoOverlayElems.splice(0);
 
   for (let detection of result.detections) {
     const p = document.createElement("p");
@@ -219,11 +216,11 @@ const displayVideoDetections = (result) => {
     liveView.appendChild(highlighter);
     liveView.appendChild(p);
 
-    children.push(highlighter);
-    children.push(p);
+    videoOverlayElems.push(highlighter);
+    videoOverlayElems.push(p);
   }
 };
 
 export { initDOMElements, hasGetUserMedia, clearOverlays,
-         enableCam, disableCam, predictWebcam, displayVideoDetections,
+         enableCam, disableCam, predictVideoFrame as predictWebcam, displayVideoDetections,
          displayImageDetections, requestImageDetection };

@@ -3,6 +3,7 @@
 //    objectDetector = Handle to the MediaPipe Object Detector
 //    runningMode = task mode {IMAGE, VIDEO, LIVE_STREAM}
 //    isObjectDetectorReady = Indicates if object detector is initialized/loaded
+// ObjectDetector class API: https://ai.google.dev/edge/api/mediapipe/js/tasks-vision.objectdetector#objectdetector_class
 
 import { ObjectDetector, FilesetResolver } from "@mediapipe/tasks-vision";
 

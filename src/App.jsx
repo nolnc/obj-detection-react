@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { initializeObjectDetector } from './ObjectDetector';
+import { initializeObjectDetector } from './ObjectDetectorAdapter';
 import { initDOMElements, enableCam, disableCam } from './Detections';
 import ImageDropZone from './ImageDropZone';
 
@@ -46,7 +46,7 @@ function App() {
           <button className="display-mode-toggle" onClick={handleModeButtonClick}>Switch to IMAGE Mode</button>
           <p>Hold some objects up close to your webcam to get a real-time detection! When ready click "enable webcam" below and accept access to the webcam.</p>
           <div id="liveView" className="videoView">
-            <video id="webcam" autoPlay playsInline></video>
+            <video id="videoCam" autoPlay playsInline></video>
           </div>
         </div>
 
