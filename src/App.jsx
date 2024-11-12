@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react';
-import { initializeObjectDetector } from './ObjectDetectorAdapter';
-import { initDOMElements, enableCam, disableCam } from './Detections';
+import React, { useEffect, useContext } from 'react';
+import { ObjectDetectorProvider, ObjectDetectorAdapterCtx } from './ObjectDetectorAdapterCtx';
+import { DetectionManagerProvider, DetectionManagerCtx } from './DetectionManagerCtx';
 import ImageDropZone from './ImageDropZone';
+//import ScoreThresholdInput from './ScoreThresholdInput';
+import { ScoreThresholdProvider } from './ScoreThresholdContext';
 
-function App() {
+function InnerApp() {
+  const { initializeObjectDetector } = useContext(ObjectDetectorAdapterCtx);
+  const { enableCam, disableCam } = useContext(DetectionManagerCtx);
 
   useEffect(() => {
+    //console.log("App useEffect() init");
     initializeObjectDetector();
-    initDOMElements();
   }, []);
 
   const handleModeButtonClick = async () => {
@@ -32,6 +36,8 @@ function App() {
         <p>Also, check out the repository for this project: <a href="https://github.com/nolnc/obj-detection-react" target="_blank" rel="noreferrer">obj-detection-react</a>.</p></div>
       <div id="detector-container">
 
+        {/*<ScoreThreshholdInput/>*/}
+
         <div id="image-mode">
           <h2>Detecting Images</h2>
           <button className="display-mode-toggle" onClick={handleModeButtonClick}>Switch to VIDEO Mode</button>
@@ -52,6 +58,19 @@ function App() {
 
       </div>
     </div>
+  );
+}
+
+// Context provider wrapper for App 
+function App() {
+  return (
+    <ObjectDetectorProvider>
+      <ScoreThresholdProvider>
+        <DetectionManagerProvider>
+          <InnerApp />
+        </DetectionManagerProvider>
+      </ScoreThresholdProvider>
+    </ObjectDetectorProvider>
   );
 }
 

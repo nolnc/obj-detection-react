@@ -1,12 +1,14 @@
 // Component for image upload and detection.
 
-import React, { useEffect, useState } from 'react';
-import { requestImageDetection, clearOverlays } from './Detections';
+import React, { useEffect, useState, useContext } from 'react';
+import { DetectionManagerCtx } from './DetectionManagerCtx';
 
 const ImageDropZone = () => {
   const [dragging, setDragging] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFileName, setImageFileName] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  const { requestImageDetection, clearImageOverlays } = useContext(DetectionManagerCtx);
 
   let resizeTimeout;
 
@@ -28,23 +30,21 @@ const ImageDropZone = () => {
     });
   }, []);
 
-  function triggerImageDetection() {
+  async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
     if (imageForDetectElem) {
-      imageForDetectElem.onload = async () => {
-        await requestImageDetection(imageForDetectElem);
-        const dropZoneSelector = document.querySelector('.drop-zone');
-        dropZoneSelector.style.width = `${imageForDetectElem.width}px`;
-        dropZoneSelector.style.height = `${imageForDetectElem.height}px`;
-      };
+      await requestImageDetection(imageForDetectElem);
+      const dropZoneSelector = document.querySelector('.drop-zone');
+      dropZoneSelector.style.width = `${imageForDetectElem.width}px`;
+      dropZoneSelector.style.height = `${imageForDetectElem.height}px`;
     }
   }
 
   const handleClearImageButtonClick = async (e) => {
     e.stopPropagation();
-    setImageFile(null);
+    setImageFileName(null);
     setImagePreview(null);
-    clearOverlays();
+    clearImageOverlays();
     const dropZoneSelector = document.querySelector('.drop-zone');
     dropZoneSelector.style.width = `50vw`;
     dropZoneSelector.style.height = `25vh`;
@@ -68,7 +68,7 @@ const ImageDropZone = () => {
     setDragging(false);
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      setImageFile(files[0]);
+      setImageFileName(files[0]);
       const reader = new FileReader();
       reader.onload = () => {
         setImagePreview(reader.result);
@@ -82,9 +82,10 @@ const ImageDropZone = () => {
       console.log("No file selected");
       return;
     }
-    setImageFile(e.target.files[0]);
+    setImageFileName(e.target.files[0]);
     const reader = new FileReader();
     reader.onload = () => {
+      //console.log("ImageDropZone handleFileChange() onload");
       setImagePreview(reader.result);
     };
     reader.onerror = (error) => {
@@ -94,6 +95,7 @@ const ImageDropZone = () => {
   };
 
   const handleClick = (e) => {
+    //console.log("ImageDropZone handleClick()");
     e.stopPropagation();
     document.getElementById('fileInput').click();
   };
@@ -105,11 +107,11 @@ const ImageDropZone = () => {
       >
         <input id="fileInput" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
           {!imagePreview && <label htmlFor="image-input" className="upload-label-inside">
-            {imageFile ? imageFile.name : 'Drag & Drop Image or Click to Upload'}
+            {imageFileName ? imageFileName.name : 'Drag & Drop Image or Click to Upload'}
             </label>
           }
         {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects"/>}
-        {imageFile && <label className="upload-label-outside">{imageFile.name}</label>}
+        {imageFileName && <label className="upload-label-outside">{imageFileName.name}</label>}
         {imagePreview && <button id="clear-image-button" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
       </div>
     </div>

@@ -16,6 +16,23 @@ em {
   font-weight: bold;
 }
 
+.slider-container {
+  display: flex;
+  align-items: center;
+}
+
+#slider {
+  width: 200px;
+  height: 10px;
+}
+
+#slider-value {
+  width: 50px;
+  height: 20px;
+  margin-left: 10px;
+  text-align: center;
+}
+
 .display-mode-toggle {
   /* Dimensions */
   padding: 12px 24px;
