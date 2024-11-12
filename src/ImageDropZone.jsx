@@ -34,10 +34,16 @@ const ImageDropZone = () => {
     const imageForDetectElem = document.getElementById("image-for-detect");
     console.log("triggerImageDetection() imageForDetectElem=" + imageForDetectElem);
     if (imageForDetectElem) {
-      await requestImageDetection(imageForDetectElem);
-      const dropZoneSelector = document.querySelector('.drop-zone');
-      dropZoneSelector.style.width = `${imageForDetectElem.width}px`;
-      dropZoneSelector.style.height = `${imageForDetectElem.height}px`;
+      requestImageDetection(imageForDetectElem)
+        .then(() => {
+          console.log("requestImageDetection() finished");
+          const dropZoneSelector = document.querySelector('.drop-zone');
+          dropZoneSelector.style.width = `${imageForDetectElem.width}px`;
+          dropZoneSelector.style.height = `${imageForDetectElem.height}px`;
+        })
+        .catch((error) => {
+          console.error('requestImageDetection failed:', error);
+        });
     }
   }
 
@@ -47,7 +53,7 @@ const ImageDropZone = () => {
     setImagePreview(null);
     clearImageOverlays();
     const dropZoneSelector = document.querySelector('.drop-zone');
-    dropZoneSelector.style.width = `50vw`;
+    dropZoneSelector.style.width = `75vw`;    // keep this same as the default defined in index.css
     dropZoneSelector.style.height = `25vh`;
   };
 

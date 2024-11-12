@@ -173,7 +173,7 @@ video {
 
 .drop-zone {
   height: 25vh;
-  width: 50vw;
+  width: 75vw;  /* match this with the width defined in handleClearImageButtonClick() */
   border: 1px dashed #ccc;
   /*background-color: #908899;*/
   padding: 0;

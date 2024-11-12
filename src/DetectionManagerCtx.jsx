@@ -51,14 +51,35 @@ const DetectionManagerProvider = ({ children }) => {
     console.log("requestImageDetection()");
 
     if (!target || !target.parentNode) {
-      console.error('Target element not found or missing parent node');
-      return;
+      const error = new Error('Target element not found or missing parent node');
+      console.log(error.message);
+      return Promise.reject(error);
     }
     removeImageOverlay(target.parentNode);
 
+    //console.log("isObjectDetectorReady=" + isObjectDetectorReady);
+    //console.log("objectDetector=" + objectDetector);
     if (!objectDetector || !isObjectDetectorReady) {
-      console.log("Object Detector is still loading. Please try again.");
-      return;
+      const error = new Error('Object Detector not loaded. Please try again.');
+      console.log(error.message);
+
+      /*
+      console.log("Attempting to reinitialize object detector...");
+      try {
+        await initializeObjectDetector();
+        console.log("isObjectDetectorReady=" + isObjectDetectorReady);
+        console.log("objectDetector=" + objectDetector);
+
+        if (!objectDetector || !isObjectDetectorReady) {
+          console.log("Reinitialization attempt failed");
+          return Promise.reject(error);
+        }
+      }
+      catch (error) {
+        console.error('Reinitialization failed:', error);
+        return Promise.reject(error);
+      }
+      */
     }
 
     if (objectDetector.runningMode !== "IMAGE") {
