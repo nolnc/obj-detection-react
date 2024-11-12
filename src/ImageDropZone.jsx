@@ -32,6 +32,7 @@ const ImageDropZone = () => {
 
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
+    console.log("triggerImageDetection() imageForDetectElem=" + imageForDetectElem);
     if (imageForDetectElem) {
       await requestImageDetection(imageForDetectElem);
       const dropZoneSelector = document.querySelector('.drop-zone');

@@ -33,6 +33,7 @@ const ObjectDetectorProvider = ({ children }) => {
     }
     catch (error) {
         console.error('initializeObjectDetector error:', error);
+        alert('Problem initializing object detector');
     }
   };
 

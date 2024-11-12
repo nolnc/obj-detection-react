@@ -26,7 +26,6 @@ const DetectionManagerProvider = ({ children }) => {
   const { sliderValue } = useContext(ScoreThresholdContext);
 
   useEffect(() => {
-    //console.log("DetectionManagerProvider useEffect int");
     initDOMElements();
   }, []);
 
@@ -35,7 +34,7 @@ const DetectionManagerProvider = ({ children }) => {
       console.log("Already loaded");
       setVideoElem(document.getElementById("videoCam"));
       setiveViewElem(document.getElementById("liveView"));
-      //console.log("initDOMElements() document.readyState=" + document.readyState + " videoElem=" + videoElem);
+      //console.log("initDOMElements() document.readyState=" + document.readyState + " videoElem=" + document.getElementById("videoCam"));
     }
     else {
       console.log("DOM elements not loaded yet");
@@ -43,13 +42,14 @@ const DetectionManagerProvider = ({ children }) => {
         console.log("DOM Content Loaded");
         setVideoElem(document.getElementById("videoCam"));
         setiveViewElem(document.getElementById("liveView"));
-        //console.log("initDOMElements() DOMContentLoaded videoElem=" + videoElem);
+        //console.log("initDOMElements() DOMContentLoaded videoElem=" + document.getElementById("videoCam"));
       });
     };
   };
 
   async function requestImageDetection(target) {
-    //console.log("requestImageDetection()");
+    console.log("requestImageDetection()");
+
     if (!target || !target.parentNode) {
       console.error('Target element not found or missing parent node');
       return;
@@ -57,7 +57,7 @@ const DetectionManagerProvider = ({ children }) => {
     removeImageOverlay(target.parentNode);
 
     if (!objectDetector || !isObjectDetectorReady) {
-      alert("Object Detector is still loading. Please try again.");
+      console.log("Object Detector is still loading. Please try again.");
       return;
     }
 
