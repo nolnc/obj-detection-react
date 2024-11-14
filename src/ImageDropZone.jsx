@@ -10,7 +10,7 @@ const ImageDropZone = () => {
   const [isShowDropDownVisible, setIsShowDropDownVisible] = useState(false);
   const [isDropDownOptionAllChecked, setIsDropDownOptionAllChecked] = useState(true);
 
-  const { requestImageDetection, clearImageOverlays, detectionCategories } = useContext(DetectionManagerCtx);
+  const { requestImageDetection, clearImageOverlays, imageDetectionCategories } = useContext(DetectionManagerCtx);
 
   let resizeTimeout;
 
@@ -38,7 +38,7 @@ const ImageDropZone = () => {
 
   useEffect(() => {
     updateDetectionCategoryDropDown();
-  }, [detectionCategories]);
+  }, [imageDetectionCategories]);
 
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
@@ -127,20 +127,66 @@ const ImageDropZone = () => {
   };
 
   const handleLabelDropdownClick = (e) => {
-    console.log("handleLabelDropdownClick() target=" + e.target);
     e.stopPropagation();
+    console.log("handleLabelDropdownClick() target=" + e.target);
+    const checkbox = e.target.closest('li').querySelector('input[type="checkbox"]');
+    console.log("checkbox.id=" + checkbox.id);
+
+    if (checkbox.id === "option-all") {
+      handleDropdownOptionAllClick(e);
+    }
+    else {
+      const detections = document.getElementsByClassName("detection");
+      const optionAllElem = document.getElementById("option-all");
+      for (let detection of detections) {
+        if (detection.getAttribute("data-category-name") === checkbox.nextSibling.textContent) {
+          if (checkbox.checked) {
+            detection.style.display = "block";
+          }
+          else {
+            detection.style.display = "none";
+            optionAllElem.checked = false;
+          }
+        }
+      }
+    }
   };
 
   const handleDropdownOptionAllClick = (e) => {
     console.log("handleDropdownOptionAllClick() target=" + e.target);
+    e.stopPropagation();
+    const detections = document.getElementsByClassName("detection");
+    const optionAllElem = document.getElementById("option-all");
+    for (let detection of detections) {
+      if (optionAllElem.checked) {
+        detection.style.display = "block";
+      }
+      else {
+        detection.style.display = "none";
+      }
+    }
+    const checkboxElems = document.getElementsByClassName("label-option");
+    for (let checkbox of checkboxElems) {
+      if (optionAllElem.checked) {
+        checkbox.checked = true;
+      }
+      else {
+        checkbox.checked = false;
+      }
+    }
+  };
+
+  const handleDropdownOptionClick = (e) => {
+    console.log("handleDropdownOptionClick() target=" + e.target);
     e.stopPropagation();
   };
 
   function updateDetectionCategoryDropDown() {
     const dropDownElem = document.getElementById('show-dropdown');
     if (dropDownElem) {
-      for (const category of detectionCategories) {
+      for (const category of imageDetectionCategories) {
         const checkbox = document.createElement("input");
+        checkbox.className = "label-option";
         checkbox.type = "checkbox";
         checkbox.id = "option-" + category;
         checkbox.defaultChecked = true;
@@ -179,8 +225,8 @@ const ImageDropZone = () => {
               <button id="show-button" className="show-button" onClick={handleShowLabelsClick}>Show Labels</button>
               <div id="show-dropdown" className="show-dropdown" onClick={handleLabelDropdownClick}>
                 <ul>
-                  <li onClick={handleDropdownOptionAllClick}>
-                    <input type="checkbox" id="option-all" defaultChecked={isDropDownOptionAllChecked}/>
+                  <li>
+                    <input className="label-option" type="checkbox" id="option-all" defaultChecked={isDropDownOptionAllChecked}/>
                     <label htmlFor="option-all">All</label>
                   </li>
                 </ul>

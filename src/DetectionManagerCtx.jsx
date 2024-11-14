@@ -16,7 +16,8 @@ const DetectionManagerCtx = createContext();
 
 const DetectionManagerProvider = ({ children }) => {
 
-  const [detectionCategories, setDetectionCategories] = useState(new Set());
+  const [imageDetectionCategories, setImageDetectionCategories] = useState(new Set());
+  const [videoDetectionCategories, setVideoDetectionCategories] = useState(new Set());
 
   const [videoElem, setVideoElem] = useState(null);
   const [liveViewElem, setiveViewElem] = useState(null);
@@ -100,7 +101,7 @@ const DetectionManagerProvider = ({ children }) => {
 
     for (let detection of result.detections) {
       const categoryName = capitalizeWords(detection.categories[0].categoryName);
-      console.log("categoryName=" + categoryName);
+      //console.log("categoryName=" + categoryName);
       categorySet.add(categoryName);
 
       const scorePercent = Math.round(parseFloat(detection.categories[0].score) * 100);
@@ -115,7 +116,7 @@ const DetectionManagerProvider = ({ children }) => {
       const g = (nameHash >> 8) & 0xFF;
       const b = nameHash & 0xFF;
       const highlightColorStyle = "rgb(" + r + "," + g + "," + b + ")";
-      console.log("nameHash=" + nameHash + " r=" + r + " g=" + g + " b=" + b + " highlightColorStyle=" + highlightColorStyle);
+      //console.log("nameHash=" + nameHash + " r=" + r + " g=" + g + " b=" + b + " highlightColorStyle=" + highlightColorStyle);
 
       const pTxt = document.createElement("p");
       pTxt.setAttribute("class", "overlay-text");
@@ -140,11 +141,11 @@ const DetectionManagerProvider = ({ children }) => {
 
       resultElement.parentNode.appendChild(pDetectElem);
     }
-    setDetectionCategories(categorySet);
+    setImageDetectionCategories(categorySet);
   };
 
   function stringToHash(str) {
-    let hash = 1000000;
+    let hash = 987654321;
     for (let i = 0; i < str.length; i++) {
       hash = ((hash << 5) + str.charCodeAt(i)) | 0;
     }
@@ -234,18 +235,32 @@ const DetectionManagerProvider = ({ children }) => {
     }
     videoOverlayElems.splice(0);
 
+    const categorySet = new Set();
+
     for (let detection of result.detections) {
-      const categoryName = detection.categories[0].categoryName;
+      const categoryName = capitalizeWords(detection.categories[0].categoryName);
+      //console.log("categoryName=" + categoryName);
+      categorySet.add(categoryName);
+
+      const scorePercent = Math.round(parseFloat(detection.categories[0].score) * 100);
+
+      const pDetectElem = document.createElement("div");
+      pDetectElem.setAttribute("class", "detection");
+      pDetectElem.setAttribute("data-category-name", categoryName);
+      pDetectElem.setAttribute("data-score", scorePercent);
+
       const nameHash = stringToHash(categoryName);
       const r = (nameHash >> 16) & 0xFF;
       const g = (nameHash >> 8) & 0xFF;
       const b = nameHash & 0xFF;
+      const highlightColorStyle = "rgb(" + r + "," + g + "," + b + ")";
+      //console.log("nameHash=" + nameHash + " r=" + r + " g=" + g + " b=" + b + " highlightColorStyle=" + highlightColorStyle);
 
-      const p = document.createElement("p");
-      p.setAttribute("class", "overlay-text");
-      p.innerText = categoryName + " " + Math.round(parseFloat(detection.categories[0].score) * 100) + "%";
-      p.style =
-        "border-color: rgb(" + r + "," + g + "," + b + ");" +
+      const pTxt = document.createElement("p");
+      pTxt.setAttribute("class", "overlay-text");
+      pTxt.innerText = categoryName + " " + scorePercent + "%";
+      pTxt.style =
+        "color: " + highlightColorStyle + ";" +
         "left: " + (videoElem.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX) + "px;" +
         "top: " + detection.boundingBox.originY + "px; " +
         "width: " + (detection.boundingBox.width - 10) + "px;";
@@ -253,22 +268,23 @@ const DetectionManagerProvider = ({ children }) => {
       const highlighter = document.createElement("div");
       highlighter.setAttribute("class", "overlay-box");
       highlighter.style =
-        "border-color: rgb(" + r + "," + g + "," + b + ");" +
+        "border-color: " + highlightColorStyle + ";" +
         "left: " + (videoElem.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX) + "px;" +
         "top: " + detection.boundingBox.originY + "px;" +
-        "width: " + (detection.boundingBox.width - 10) + "px;" +
+        "width: " + detection.boundingBox.width + "px;" +
         "height: " + detection.boundingBox.height + "px;";
 
-      liveViewElem.appendChild(highlighter);
-      liveViewElem.appendChild(p);
+      pDetectElem.appendChild(highlighter);
+      pDetectElem.appendChild(pTxt);
 
-      videoOverlayElems.push(highlighter);
-      videoOverlayElems.push(p);
+      liveViewElem.appendChild(pDetectElem);
+      videoOverlayElems.push(pDetectElem);
     }
+    setVideoDetectionCategories(categorySet);
   };
 
   const capitalizeWords = (str) => {
-    console.log("capitalizeWords() str=" + str);
+    //console.log("capitalizeWords() str=" + str);
     return (str.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('_'));
   };
 
@@ -277,7 +293,8 @@ const DetectionManagerProvider = ({ children }) => {
     requestImageDetection,
     enableCam,
     disableCam,
-    detectionCategories
+    imageDetectionCategories,
+    videoDetectionCategories
   };
 
   return (
