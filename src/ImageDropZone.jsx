@@ -36,9 +36,21 @@ const ImageDropZone = () => {
   }, [imagePreview]);
 
   useEffect(() => {
-    console.log("ImageDropZone useEffect update drop down list");
+    resetDropdownList();
     updateDetectionCategoryDropDown();
   }, [imageDetectionCategories]);
+
+  function resetDropdownList() {
+    const dropDownElem = document.getElementById('show-dropdown');
+    if (dropDownElem) {
+      const firstLi = dropDownElem.querySelector('li:first-child');
+      let nextElements = firstLi.nextElementSibling;
+      while (nextElements) {
+        nextElements.remove();
+        nextElements = firstLi.nextElementSibling;
+      }
+    }
+  }
 
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
@@ -172,6 +184,7 @@ const ImageDropZone = () => {
   };
 
   function updateDetectionCategoryDropDown() {
+    console.log("updateDetectionCategoryDropDown()");
     const dropDownElem = document.getElementById('show-dropdown');
     if (dropDownElem) {
       for (const category of imageDetectionCategories) {

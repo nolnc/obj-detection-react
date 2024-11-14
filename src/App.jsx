@@ -42,7 +42,7 @@ function InnerApp() {
         <div id="image-mode">
           <h2>Detecting Images</h2>
           <button className="display-mode-toggle" onClick={handleModeButtonClick}>Switch to VIDEO Mode</button>
-          <p><b>Upload</b> an image below then <b>click</b> on it to detect objects in the image.</p>
+          <p><b>Upload</b> an image below to detect objects in the image.</p>
           <div id="staticImageView" className="imageView">
             <ImageDropZone/>
           </div>

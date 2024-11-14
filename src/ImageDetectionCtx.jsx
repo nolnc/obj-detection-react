@@ -125,8 +125,6 @@ const ImageDetectionProvider = ({ children }) => {
     imageDetectionCategories
   };
 
-  console.log('ImageDetectionProvider values:', imageDetectionShared);
-
   return (
     <ImageDetectionCtx.Provider value={imageDetectionShared}>
       {children}
