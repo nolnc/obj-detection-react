@@ -40,18 +40,6 @@ const ImageDropZone = () => {
     updateDetectionCategoryDropDown();
   }, [imageDetectionCategories]);
 
-  function resetDropdownList() {
-    const dropDownElem = document.getElementById('show-dropdown');
-    if (dropDownElem) {
-      const firstLi = dropDownElem.querySelector('li:first-child');
-      let nextElements = firstLi.nextElementSibling;
-      while (nextElements) {
-        nextElements.remove();
-        nextElements = firstLi.nextElementSibling;
-      }
-    }
-  }
-
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
     console.log("triggerImageDetection() imageForDetectElem=" + imageForDetectElem);
@@ -207,6 +195,19 @@ const ImageDropZone = () => {
     }
   }
 
+  function resetDropdownList() {
+    const dropDownElem = document.getElementById('show-dropdown');
+    if (dropDownElem) {
+      const firstLi = dropDownElem.querySelector('li:first-child');
+      firstLi.firstChild.checked = true;
+      let nextElements = firstLi.nextElementSibling;
+      while (nextElements) {
+        nextElements.remove();
+        nextElements = firstLi.nextElementSibling;
+      }
+    }
+  }
+
   return (
     <div className="drop-zone-container">
       <div id="image-for-detect-parent" className={`drop-zone ${dragging ? 'dragging' : ''}`}
@@ -225,7 +226,7 @@ const ImageDropZone = () => {
           <div className="button-container">
             <button id="clear-image-button" onClick={handleClearImageButtonClick}>Clear Image</button>
             <div className="show-labels-container">
-              <button id="show-button" className="show-button" onClick={handleShowLabelsClick}>Show Labels</button>
+              <button id="show-labels-button" className="show-labels-button" onClick={handleShowLabelsClick}>Show Labels</button>
               <div id="show-dropdown" className="show-dropdown" onClick={handleLabelDropdownClick}>
                 <ul>
                   <li>

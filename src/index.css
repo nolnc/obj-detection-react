@@ -155,10 +155,11 @@ video {
 
 .button-container {
   display: flex;
-  align-items: center;
+
 }
 
 #clear-image-button {
+  align-self: flex-start;
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
@@ -186,11 +187,11 @@ video {
 
 .show-labels-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
 }
 
-.show-button {
+.show-labels-button {
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
@@ -208,14 +209,12 @@ video {
 
 .show-dropdown {
   display: none;
-  position: absolute;
+  align-self: flex-start;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   padding: 5px;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  top: 100%;
-  left: 310px;    /* need to use relative offset from show button */
   z-index: 1;
   user-select: none;         /* Standard syntax */
   -webkit-user-select: none; /* Safari */
