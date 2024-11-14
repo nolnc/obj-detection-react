@@ -7,14 +7,12 @@ const ImageDropZone = () => {
   const [dragging, setDragging] = useState(false);
   const [imageFileName, setImageFileName] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isShowDropDownVisible, setIsShowDropDownVisible] = useState(false);
+  const [isDropDownOptionAllChecked, setIsDropDownOptionAllChecked] = useState(true);
 
-  const { requestImageDetection, clearImageOverlays } = useContext(DetectionManagerCtx);
+  const { requestImageDetection, clearImageOverlays, detectionCategories } = useContext(DetectionManagerCtx);
 
   let resizeTimeout;
-
-  useEffect(() => {
-    triggerImageDetection();
-  }, [imagePreview]);
 
   useEffect(() => {
     window.addEventListener('orientationchange', () => {
@@ -28,7 +26,19 @@ const ImageDropZone = () => {
         triggerImageDetection();
       }, 500); // delay (ms)
     });
+
+    return () => {
+      clearTimeout(resizeTimeout);
+    };
   }, []);
+
+  useEffect(() => {
+    triggerImageDetection();
+  }, [imagePreview]);
+
+  useEffect(() => {
+    updateDetectionCategoryDropDown();
+  }, [detectionCategories]);
 
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
@@ -101,25 +111,84 @@ const ImageDropZone = () => {
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  const handleClick = (e) => {
-    //console.log("ImageDropZone handleClick()");
+  const handleDropZoneClick = (e) => {
+    //console.log("ImageDropZone handleDropZoneClick()");
     e.stopPropagation();
     document.getElementById('fileInput').click();
   };
 
+  const handleShowLabelsClick = (e) => {
+    console.log("handleShowLabelsClick() target=" + e.target);
+    e.stopPropagation();
+    const visible = !isShowDropDownVisible;
+    setIsShowDropDownVisible(visible);
+    const dropdownElem = (document.getElementById("show-dropdown"));
+    dropdownElem.style.display = visible ? 'block' : 'none';
+  };
+
+  const handleLabelDropdownClick = (e) => {
+    console.log("handleLabelDropdownClick() target=" + e.target);
+    e.stopPropagation();
+  };
+
+  const handleDropdownOptionAllClick = (e) => {
+    console.log("handleDropdownOptionAllClick() target=" + e.target);
+    e.stopPropagation();
+  };
+
+  function updateDetectionCategoryDropDown() {
+    const dropDownElem = document.getElementById('show-dropdown');
+    if (dropDownElem) {
+      for (const category of detectionCategories) {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = "option-" + category;
+        checkbox.defaultChecked = true;
+
+        const categoryLabel = document.createElement("label");
+        categoryLabel.htmlFor = "option-" + category;
+        categoryLabel.textContent = category;
+
+        const categoryListItem = document.createElement("li");
+        categoryListItem.appendChild(checkbox);
+        categoryListItem.appendChild(categoryLabel);
+
+        dropDownElem.firstChild.appendChild(categoryListItem);
+      }
+    }
+  }
+
   return (
     <div className="drop-zone-container">
       <div id="image-for-detect-parent" className={`drop-zone ${dragging ? 'dragging' : ''}`}
-        onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleClick}
+        onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop} onClick={handleDropZoneClick}
       >
         <input id="fileInput" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-          {!imagePreview && <label htmlFor="image-input" className="upload-label-inside">
-            {imageFileName ? imageFileName.name : 'Drag & Drop Image or Click to Upload'}
+          {!imagePreview &&
+            <label htmlFor="fileInput" className="upload-label-inside">
+              {imageFileName ? imageFileName.name : 'Drag & Drop Image or Click to Upload'}
             </label>
           }
         {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects"/>}
         {imageFileName && <label className="upload-label-outside">{imageFileName.name}</label>}
-        {imagePreview && <button id="clear-image-button" onClick={handleClearImageButtonClick}>CLEAR IMAGE</button>}
+
+        {imagePreview &&
+          <div className="button-container">
+            <button id="clear-image-button" onClick={handleClearImageButtonClick}>Clear Image</button>
+            <div className="show-labels-container">
+              <button id="show-button" className="show-button" onClick={handleShowLabelsClick}>Show Labels</button>
+              <div id="show-dropdown" className="show-dropdown" onClick={handleLabelDropdownClick}>
+                <ul>
+                  <li onClick={handleDropdownOptionAllClick}>
+                    <input type="checkbox" id="option-all" defaultChecked={isDropDownOptionAllChecked}/>
+                    <label htmlFor="option-all">All</label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        }
+
       </div>
     </div>
   );

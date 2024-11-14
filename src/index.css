@@ -67,40 +67,6 @@ em {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-#clear-image-button {
-  /* Dimensions */
-  padding: 12px 24px;
-  border-radius: 8px;
-  width: fit-content;
-
-  /* Colors */
-  background-color: #ce3631; /* Green */
-  color: #ffffff;
-  border: none;
-
-  /* Typography */
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-
-  /* Effects */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease-in-out;
-
-  /* Hover State */
-  cursor: pointer;
-}
-
-#clear-image-button:hover {
-  background-color: #8f261e; /* Darker green */
-}
-
-#clear-image-button:active {
-  transform: scale(0.95);
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
 .imageView {
   position: relative;
   float: left;
@@ -115,21 +81,6 @@ em {
   width: auto;
 }
 
-/*.overlay-text*/
-.imageView p {
-  position: absolute;
-  padding: 5px;
-  background-color: #00000046;
-  color: #49ff1b;
-  border: 1px dashed #49ff1b;
-  border-radius: 8px 8px 0px 0px; 
-  z-index: 2;
-  font-size: 12px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: bold;
-  margin: 0;
-}
-
 .videoView {
   position: relative;
   float: left;
@@ -139,6 +90,7 @@ em {
 }
 
 /*.overlay-text*/
+/*
 .videoView p {
   position: absolute;
   background-color: #00000046;
@@ -151,6 +103,7 @@ em {
   font-weight: bold;
   margin: 0;
 }
+*/
 
 video {
   clear: both;
@@ -161,11 +114,22 @@ video {
 }
 
 .overlay-text {
+  position: absolute;
+  padding: 5px;
+  background-color: #0000005e;
+  color: #49ff1b;
+  /*border: 1px dashed #49ff1b;*/
+  border-radius: 8px 8px 0px 0px; 
+  z-index: 2;
+  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  margin: 2px;
   text-transform: capitalize;
 }
 
 .overlay-box {
-  border: 1px dashed #49ff1b;
+  border: 2px dashed;
   border-radius: 8px; 
   z-index: 1;
   position: absolute;
@@ -204,4 +168,113 @@ video {
   font-family: Arial, sans-serif;
   font-size: 16px;
   font-weight: bold;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+#clear-image-button {
+  /* Dimensions */
+  padding: 12px 24px;
+  border-radius: 8px;
+  width: fit-content;
+  margin-right: 20px;
+
+  /* Colors */
+  background-color: #ce3631; /* Green */
+  color: #ffffff;
+  border: none;
+
+  /* Typography */
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+
+  /* Effects */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease-in-out;
+
+  /* Hover State */
+  cursor: pointer;
+}
+
+#clear-image-button:hover {
+  background-color: #8f261e; /* Darker green */
+}
+
+#clear-image-button:active {
+  transform: scale(0.95);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.show-labels-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.show-button {
+  /* Dimensions */
+  padding: 12px 24px;
+  border-radius: 8px;
+  width: fit-content;
+
+  /* Colors */
+  background-color: #4e73ee; /* Green */
+  color: #ffffff;
+  border: none;
+
+  /* Typography */
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+
+  /* Effects */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease-in-out;
+
+  /* Hover State */
+  cursor: pointer;
+}
+
+.show-dropdown {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  top: 100%;
+  left: 310px;    /* need to use relative offset from show button */
+  z-index: 1;
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.show-dropdown ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.show-dropdown li {
+  padding: 5px;
+}
+
+.show-dropdown li:nth-of-type(1) {
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+}
+
+.show-dropdown input[type="checkbox"] {
+  margin-right: 10px;
 }
