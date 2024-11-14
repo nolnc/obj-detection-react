@@ -1,13 +1,14 @@
 import React, { useEffect, useContext } from 'react';
 import { ObjectDetectorProvider, ObjectDetectorAdapterCtx } from './ObjectDetectorAdapterCtx';
-import { DetectionManagerProvider, DetectionManagerCtx } from './DetectionManagerCtx';
+import { ImageDetectionProvider } from './ImageDetectionCtx';
+import { VideoDetectionProvider, VideoDetectionCtx } from './VideoDetectionCtx';
 import ImageDropZone from './ImageDropZone';
 //import ScoreThresholdInput from './ScoreThresholdInput';
 import { ScoreThresholdProvider } from './ScoreThresholdContext';
 
 function InnerApp() {
   const { initializeObjectDetector } = useContext(ObjectDetectorAdapterCtx);
-  const { enableCam, disableCam } = useContext(DetectionManagerCtx);
+  const { enableCam, disableCam } = useContext(VideoDetectionCtx);
 
   useEffect(() => {
     //console.log("App useEffect() init");
@@ -66,9 +67,11 @@ function App() {
   return (
     <ObjectDetectorProvider>
       <ScoreThresholdProvider>
-        <DetectionManagerProvider>
-          <InnerApp />
-        </DetectionManagerProvider>
+        <ImageDetectionProvider>
+          <VideoDetectionProvider>
+            <InnerApp />
+          </VideoDetectionProvider>
+        </ImageDetectionProvider>
       </ScoreThresholdProvider>
     </ObjectDetectorProvider>
   );

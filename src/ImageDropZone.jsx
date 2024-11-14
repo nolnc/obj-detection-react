@@ -1,16 +1,15 @@
 // Component for image upload and detection.
 
 import React, { useEffect, useState, useContext } from 'react';
-import { DetectionManagerCtx } from './DetectionManagerCtx';
+import { ImageDetectionCtx } from './ImageDetectionCtx';
 
 const ImageDropZone = () => {
   const [dragging, setDragging] = useState(false);
   const [imageFileName, setImageFileName] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isShowDropDownVisible, setIsShowDropDownVisible] = useState(false);
-  const [isDropDownOptionAllChecked, setIsDropDownOptionAllChecked] = useState(true);
 
-  const { requestImageDetection, clearImageOverlays, imageDetectionCategories } = useContext(DetectionManagerCtx);
+  const { requestImageDetection, clearImageOverlays, imageDetectionCategories } = useContext(ImageDetectionCtx);
 
   let resizeTimeout;
 
@@ -37,6 +36,7 @@ const ImageDropZone = () => {
   }, [imagePreview]);
 
   useEffect(() => {
+    console.log("ImageDropZone useEffect update drop down list");
     updateDetectionCategoryDropDown();
   }, [imageDetectionCategories]);
 
@@ -118,7 +118,6 @@ const ImageDropZone = () => {
   };
 
   const handleShowLabelsClick = (e) => {
-    console.log("handleShowLabelsClick() target=" + e.target);
     e.stopPropagation();
     const visible = !isShowDropDownVisible;
     setIsShowDropDownVisible(visible);
@@ -128,10 +127,7 @@ const ImageDropZone = () => {
 
   const handleLabelDropdownClick = (e) => {
     e.stopPropagation();
-    console.log("handleLabelDropdownClick() target=" + e.target);
     const checkbox = e.target.closest('li').querySelector('input[type="checkbox"]');
-    console.log("checkbox.id=" + checkbox.id);
-
     if (checkbox.id === "option-all") {
       handleDropdownOptionAllClick(e);
     }
@@ -153,7 +149,6 @@ const ImageDropZone = () => {
   };
 
   const handleDropdownOptionAllClick = (e) => {
-    console.log("handleDropdownOptionAllClick() target=" + e.target);
     e.stopPropagation();
     const detections = document.getElementsByClassName("detection");
     const optionAllElem = document.getElementById("option-all");
@@ -174,11 +169,6 @@ const ImageDropZone = () => {
         checkbox.checked = false;
       }
     }
-  };
-
-  const handleDropdownOptionClick = (e) => {
-    console.log("handleDropdownOptionClick() target=" + e.target);
-    e.stopPropagation();
   };
 
   function updateDetectionCategoryDropDown() {
@@ -226,7 +216,7 @@ const ImageDropZone = () => {
               <div id="show-dropdown" className="show-dropdown" onClick={handleLabelDropdownClick}>
                 <ul>
                   <li>
-                    <input className="label-option" type="checkbox" id="option-all" defaultChecked={isDropDownOptionAllChecked}/>
+                    <input className="label-option" type="checkbox" id="option-all" defaultChecked={true}/>
                     <label htmlFor="option-all">All</label>
                   </li>
                 </ul>

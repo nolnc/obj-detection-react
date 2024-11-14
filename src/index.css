@@ -1,3 +1,5 @@
+/* General */
+
 body {
   font-family: roboto;
   margin: 2em;
@@ -16,6 +18,8 @@ em {
   font-weight: bold;
 }
 
+/* ScoreThresholdInput component */
+
 .slider-container {
   display: flex;
   align-items: center;
@@ -33,39 +37,34 @@ em {
   text-align: center;
 }
 
+/* Mode toggle button */
+
 .display-mode-toggle {
-  /* Dimensions */
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
-
-  /* Colors */
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   color: #ffffff;
   border: none;
-
-  /* Typography */
   font-family: Arial, sans-serif;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-
-  /* Effects */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease-in-out;
-
-  /* Hover State */
   cursor: pointer;
 }
 
 .display-mode-toggle:hover {
-  background-color: #3e8e41; /* Darker green */
+  background-color: #3e8e41;
 }
 
 .display-mode-toggle:active {
   transform: scale(0.95);
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
 }
+
+/* Object Detection components */
 
 .imageView {
   position: relative;
@@ -102,7 +101,6 @@ video {
   padding: 5px;
   background-color: #0000005e;
   color: #49ff1b;
-  /*border: 1px dashed #49ff1b;*/
   border-radius: 8px 8px 0px 0px; 
   z-index: 2;
   font-size: 12px;
@@ -119,11 +117,12 @@ video {
   position: absolute;
 }
 
+/* ImageDropZone component */
+
 .drop-zone {
   height: 25vh;
   width: 75vw;  /* match this with the width defined in handleClearImageButtonClick() */
   border: 1px dashed #ccc;
-  /*background-color: #908899;*/
   padding: 0;
   font-size: 16px;
   cursor: pointer;
@@ -160,33 +159,24 @@ video {
 }
 
 #clear-image-button {
-  /* Dimensions */
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
   margin-right: 20px;
-
-  /* Colors */
-  background-color: #ce3631; /* Green */
+  background-color: #ce3631;
   color: #ffffff;
   border: none;
-
-  /* Typography */
   font-family: Arial, sans-serif;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-
-  /* Effects */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease-in-out;
-
-  /* Hover State */
   cursor: pointer;
 }
 
 #clear-image-button:hover {
-  background-color: #8f261e; /* Darker green */
+  background-color: #8f261e;
 }
 
 #clear-image-button:active {
@@ -201,27 +191,18 @@ video {
 }
 
 .show-button {
-  /* Dimensions */
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
-
-  /* Colors */
-  background-color: #4e73ee; /* Green */
+  background-color: #4e73ee;
   color: #ffffff;
   border: none;
-
-  /* Typography */
   font-family: Arial, sans-serif;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-
-  /* Effects */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease-in-out;
-
-  /* Hover State */
   cursor: pointer;
 }
 
@@ -236,10 +217,10 @@ video {
   top: 100%;
   left: 310px;    /* need to use relative offset from show button */
   z-index: 1;
-  user-select: none; /* Standard syntax */
+  user-select: none;         /* Standard syntax */
   -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
   overflow-y: auto;
   max-height: 300px;
   font-family: Arial, sans-serif;
