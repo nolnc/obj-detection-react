@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { ImageDetectionCtx } from './ImageDetectionCtx';
+import ScoreThreshholdInput from './ScoreThresholdInput';
+import { ScoreThresholdContext } from './ScoreThresholdContext';
 
 const ImageDropZone = () => {
   const [dragging, setDragging] = useState(false);
@@ -10,6 +12,7 @@ const ImageDropZone = () => {
   const [isShowDropDownVisible, setIsShowDropDownVisible] = useState(false);
 
   const { requestImageDetection, clearImageOverlays, imageDetectionCategories } = useContext(ImageDetectionCtx);
+  const { scoreThreshold, isScoreThresholdUpdated } = useContext(ScoreThresholdContext);
 
   let resizeTimeout;
 
@@ -39,6 +42,12 @@ const ImageDropZone = () => {
     resetDropdownList();
     updateDetectionCategoryDropDown();
   }, [imageDetectionCategories]);
+
+  useEffect(() => {
+    if (isScoreThresholdUpdated) {
+      updateDetectionOverlay();
+    }
+  }, [scoreThreshold /*isScoreThresholdUpdated*/]);
 
   async function triggerImageDetection() {
     const imageForDetectElem = document.getElementById("image-for-detect");
@@ -112,13 +121,10 @@ const ImageDropZone = () => {
   };
 
   const handleDropZoneClick = (e) => {
-    //console.log("ImageDropZone handleDropZoneClick()");
-    e.stopPropagation();
     document.getElementById('fileInput').click();
   };
 
   const handleShowLabelsClick = (e) => {
-    e.stopPropagation();
     const visible = !isShowDropDownVisible;
     setIsShowDropDownVisible(visible);
     const dropdownElem = (document.getElementById("show-dropdown"));
@@ -126,7 +132,6 @@ const ImageDropZone = () => {
   };
 
   const handleLabelDropdownClick = (e) => {
-    e.stopPropagation();
     const checkbox = e.target.closest('li').querySelector('input[type="checkbox"]');
     if (checkbox.id === "option-all") {
       handleDropdownOptionAllClick(e);
@@ -136,7 +141,7 @@ const ImageDropZone = () => {
       const optionAllElem = document.getElementById("option-all");
       for (let detection of detections) {
         if (detection.getAttribute("data-category-name") === checkbox.nextSibling.textContent) {
-          if (checkbox.checked) {
+          if (checkbox.checked && (detection.getAttribute("data-score") >= scoreThreshold)) {
             detection.style.display = "block";
           }
           else {
@@ -149,11 +154,11 @@ const ImageDropZone = () => {
   };
 
   const handleDropdownOptionAllClick = (e) => {
-    e.stopPropagation();
+    //e.stopPropagation();
     const detections = document.getElementsByClassName("detection");
     const optionAllElem = document.getElementById("option-all");
     for (let detection of detections) {
-      if (optionAllElem.checked) {
+      if (optionAllElem.checked && (detection.getAttribute("data-score") >= scoreThreshold)) {
         detection.style.display = "block";
       }
       else {
@@ -208,6 +213,27 @@ const ImageDropZone = () => {
     }
   }
 
+  function updateDetectionOverlay() {
+    console.log("updateDetectionOverlay()");
+    const detectionElements = document.querySelectorAll('.detection');
+    console.log("detectionElements=" + detectionElements);
+    detectionElements.forEach((detection) => {
+      console.log("detection=" + detection);
+      const score = parseInt(detection.getAttribute('data-score'));
+      const categoryName = detection.getAttribute('data-category-name');
+      console.log("categoryName=" + categoryName + " score=" + score);
+      const optionElement = document.getElementById(`option-${categoryName}`);
+      console.log("optionElement.tagName=" + optionElement.tagName + " optionElement.id=" + optionElement.id);
+  
+      if (score < scoreThreshold) {
+        detection.style.display = 'none';
+      }
+      else if (score >= scoreThreshold && optionElement.checked) {
+        detection.style.display = 'block';
+      }
+    });
+  }
+
   return (
     <div className="drop-zone-container">
       <div id="image-for-detect-parent" className={`drop-zone ${dragging ? 'dragging' : ''}`}
@@ -220,6 +246,8 @@ const ImageDropZone = () => {
             </label>
           }
         {imagePreview && <img id="image-for-detect" src={imagePreview} alt="Click to detect objects"/>}
+      </div>
+      <div className="drop-zone-bottom-panel">
         {imageFileName && <label className="upload-label-outside">{imageFileName.name}</label>}
 
         {imagePreview &&
@@ -236,6 +264,7 @@ const ImageDropZone = () => {
                 </ul>
               </div>
             </div>
+            <ScoreThreshholdInput/>
           </div>
         }
 

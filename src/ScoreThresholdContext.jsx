@@ -5,11 +5,14 @@ import { createContext, useState } from 'react';
 const ScoreThresholdContext = createContext();
 
 const ScoreThresholdProvider = ({ children }) => {
-  const [sliderValue, setSliderValue] = useState(0.3);
+  const [scoreThreshold, setScoreThreshold] = useState(30);
+  const [isScoreThresholdUpdated, setIsScoreThresholdUpdated] = useState(false);
 
   const sharedContext = {
-    sliderValue,
-    setSliderValue
+    scoreThreshold,
+    setScoreThreshold,
+    isScoreThresholdUpdated,
+    setIsScoreThresholdUpdated
   };
 
   return (

@@ -135,6 +135,11 @@ video {
   border-color: #aaa;
 }
 
+.drop-zone-bottom-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .upload-label-inside {
   cursor: pointer;
   position: absolute;
@@ -155,7 +160,7 @@ video {
 
 .button-container {
   display: flex;
-
+  gap: 20px;
 }
 
 #clear-image-button {
@@ -163,7 +168,7 @@ video {
   padding: 12px 24px;
   border-radius: 8px;
   width: fit-content;
-  margin-right: 20px;
+  /*margin-right: 20px;*/
   background-color: #ce3631;
   color: #ffffff;
   border: none;
@@ -243,4 +248,105 @@ video {
 
 .show-dropdown input[type="checkbox"] {
   margin-right: 10px;
+}
+
+.slider-component-container {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  background-color: #4e73ee;
+  padding: 6px 12px;
+}
+
+.slider-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slider-name {
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari/Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.slider-bar-container input[type="range"]::-webkit-slider-runnable-track {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none; 
+  /* creating a custom design */
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  border-radius: 15px;
+  /*  overflow: hidden;  remove this line*/
+  
+  /* New additions */
+  height: 3px;
+  background: #ccc;
+}
+
+.slider-bar-container input[type="range"]::-webkit-slider-thumb {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none; 
+  /* creating a custom design */
+  height: 10px;
+  width: 10px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  border: none;
+  margin-top: -6px;
+
+  /* box-shadow: -407px 0 0 400px #f50; emove this line */
+  transition: .2s ease-in-out;
+}
+
+/* Thumb: Firefox */
+.slider-bar-container input[type="range"]::-moz-range-thumb {
+  height: 10px;
+  width: 10px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  border: none;
+  
+  /* box-shadow: -407px 0 0 400px #f50; emove this line */
+  transition: .2s ease-in-out;
+}
+
+/* Hover, active & focus Thumb: Webkit */
+
+.slider-bar-container input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+}
+.slider-bar-container input[type="range"]:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+}
+.slider-bar-container input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Hover, active & focus Thumb: Firfox */
+
+.slider-bar-container input[type="range"]::-moz-range-thumb:hover {
+  box-shadow: 0 0 0 10px rgba(255, 255, 255, .2);
+}
+.slider-bar-container input[type="range"]:active::-moz-range-thumb {
+  box-shadow: 0 0 0 13px rgba(255, 255, 255, .1);
+}
+.slider-bar-container input[type="range"]:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 13px rgba(255, 255, 255, .2);  
+}
+
+#slider-value {
+  border-radius: 8px;
+  font-weight: bold;
 }

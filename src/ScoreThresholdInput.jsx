@@ -8,25 +8,34 @@ import React, { useContext } from 'react';
 import { ScoreThresholdContext } from './ScoreThresholdContext';
 
 const ScoreThresholdInput = () => {
-  const { sliderValue, setSliderValue } = useContext(ScoreThresholdContext);
+  const { scoreThreshold, setScoreThreshold, setIsScoreThresholdUpdated } = useContext(ScoreThresholdContext);
 
   const handleSliderChange = (e) => {
-    setSliderValue(parseFloat(e.target.value).toFixed(2));
-    console.log("handleSliderChange() sliderValue=" + sliderValue);
+    setScoreThreshold(e.target.value);
+    console.log("handleSliderChange() score=" + e.target.value);
   };
 
   const handleManualInput = (e) => {
-    const value = parseFloat(e.target.value);
-    if (value >= 0.01 && value <= 1.00) {
-      setSliderValue(value.toFixed(2));
+    const value = e.target.value;
+    console.log("handleManualInput() score=" + value);
+    if (value >= 1 && value <= 100) {
+      setScoreThreshold(value);
+      setIsScoreThresholdUpdated(true);
     }
-    console.log("handleManualInput() sliderValue=" + sliderValue);
+  };
+
+  const handleMouseUp = (e) => {
+    console.log("handleMouseUp() score=" + e.target.value);
+    setIsScoreThresholdUpdated(true);
   };
 
   return (
-    <div className="slider-container">
-      <input type="range" id="slider" min="0.01" max="1.00" step="0.01" value={sliderValue} onChange={handleSliderChange}/>
-      <input type="number" id="slider-value" min="0.01" max="1.00" step="0.01" value={sliderValue} onChange={handleManualInput}/>
+    <div className="slider-component-container">
+      <div className="slider-bar-container">
+        <label className="slider-name">Min % Confidence</label>
+        <input type="range" id="slider-bar" min="1" max="100" step="1" value={scoreThreshold} onChange={handleSliderChange} onMouseUp={handleMouseUp}/>
+      </div>
+      <input type="number" id="slider-value" min="1" max="100" step="1" value={scoreThreshold} onChange={handleManualInput}/>
     </div>
   );
 };
